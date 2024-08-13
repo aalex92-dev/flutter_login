@@ -156,14 +156,15 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
   }
 
   void _switchAuthMode() {
-    final auth = Provider.of<Auth>(context, listen: false);
-    final newAuthMode = auth.switchAuth();
-
-    if (newAuthMode == AuthMode.signup) {
-      _switchAuthController.forward();
-    } else {
-      _switchAuthController.reverse();
-    }
+    widget.onSwitchSignUpAdditionalData();
+    // final auth = Provider.of<Auth>(context, listen: false);
+    // final newAuthMode = auth.switchAuth();
+    //
+    // if (newAuthMode == AuthMode.signup) {
+    //   _switchAuthController.forward();
+    // } else {
+    //   _switchAuthController.reverse();
+    // }
   }
 
   Future<bool> _submit() async {
@@ -398,8 +399,8 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
   }
 
   Widget _buildPasswordField(double width, LoginMessages messages, Auth auth) {
-    return AnimatedPasswordTextFormField(
-      animatedWidth: width,
+    return AnimatedTextFormField(
+      width: width,
       loadingController: widget.loadingController,
       interval: _passTextFieldLoadingAnimationInterval,
       labelText: messages.passwordHint,
@@ -432,8 +433,8 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     LoginMessages messages,
     Auth auth,
   ) {
-    return AnimatedPasswordTextFormField(
-      animatedWidth: width,
+    return AnimatedTextFormField(
+      width: width,
       enabled: auth.isSignup,
       loadingController: widget.loadingController,
       inertiaController: _postSwitchAuthController,
@@ -443,14 +444,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       textInputAction: TextInputAction.done,
       focusNode: _confirmPasswordFocusNode,
       onFieldSubmitted: (value) => _submit(),
-      validator: auth.isSignup
-          ? (value) {
-              if (value != _passController.text) {
-                return messages.confirmPasswordError;
-              }
-              return null;
-            }
-          : (value) => null,
+      validator: auth.isSignup ? (value) => null : (value) => null,
       onSaved: (value) => auth.confirmPassword = value!,
       initialIsoCode: widget.initialIsoCode,
     );
